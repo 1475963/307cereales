@@ -1,0 +1,90 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+from __future__ import print_function
+import sys
+import simplex as SimplexAlg, tk_draw as TkDraw
+
+"""
+args parsing
+"""
+
+def     check_entry(nE1, nE2, nE3, nE4, pA, pB, pM, pO, pS):
+    state = 0
+    if nE1 < 0 or nE2 < 0 or nE3 < 0 or nE4 < 0:
+        print("ERROR:\tEX must be superior or equal to 0")
+        state = -1
+    if pA <= 0 or pB <= 0 or pM <= 0 or pO <= 0 or pS <= 0:
+        print("ERROR:\tPrices must be superior to 0 to make a profit")
+        state = -1
+    return state
+
+"""
+dump results
+"""
+
+def     dump_results(nE1, nE2, nE3, nE4, pA, pB, pM, pO, pS, data, product):
+    xmax = len(data[0])
+    res = 0
+    results = []
+    ressources = [nE1, nE2, nE3, nE4]
+    prices = [pA, pB, pM, pO, pS]
+    print("ressources : {:0.0f} E1, {:0.0f} E2, {:0.0f} E3, {:0.0f} E4\n".format(nE1, nE2, nE3, nE4))
+    for i in range(5):
+        if product[i] == -1:
+            results.append(0)
+        else:
+            results.append(data[product[i]][xmax - 1])
+    print("avoine :\t{} unité(s)\tà {} €/unité".format(results[0], pA))
+    print("blé :\t\t{} unité(s)\tà {} €/unité".format(results[1], pB))
+    print("maïs :\t\t{} unité(s)\tà {} €/unité".format(results[2], pM))
+    print("orge :\t\t{} unité(s)\tà {} €/unité".format(results[3], pO))
+    print("soja :\t\t{} unité(s)\tà {} €/unité\n".format(results[4], pS))
+    for i in range(len(results)):
+        res += results[i] * prices[i]
+    print("valeur totale de la production : {} €".format(res))
+    TkDraw.draw_graphic(window, ressources, results, prices, res)
+
+"""
+create tab
+"""
+
+def     get_tab(nE1, nE2, nE3, nE4, pA, pB, pM, pO, pS):
+    data = [[1.0, 0.0, 1.0, 0.0, 2.0, 1.0, 0.0, 0.0, 0.0, 0.0, nE1], 
+            [1.0, 2.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, nE2],
+            [2.0, 1.0, 0.0, 1.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, nE3],
+            [0.0, 0.0, 3.0, 1.0, 2.0, 0.0, 0.0, 0.0, 1.0, 0.0, nE4],
+            [-pA, -pB, -pM, -pO, -pS, 0.0, 0.0, 0.0, 0.0, 1.0, 0]]
+    return data
+
+"""
+resolve mandatory part
+"""
+
+def     do_it(nE1, nE2, nE3, nE4, pA, pB, pM, pO, pS):
+    if check_entry(nE1, nE2, nE3, nE4, pA, pB, pM, pO, pS) == -1:
+        return -1
+    data = get_tab(nE1, nE2, nE3, nE4, pA, pB, pM, pO, pS)
+    product = [-1, -1, -1, -1, -1]
+    SimplexAlg.simplex(data, product)
+    instance = TkDraw.get_instance()
+    window = TkDraw.get_window(instance)
+    dump_results(nE1, nE2, nE3, nE4, pA, pB, pM, pO, pS, data, product);
+    TkDraw.do_mainloop()
+    return 0
+
+"""
+entry point
+"""
+
+if __name__ == '__main__':
+    if len(sys.argv) == 10:
+        try:
+            if do_it(float(int(sys.argv[1])), float(int(sys.argv[2])), float(int(sys.argv[3])), float(int(sys.argv[4])), float(int(sys.argv[5])), float(int(sys.argv[6])), float(int(sys.argv[7])), float(int(sys.argv[8])), float(int(sys.argv[9]))) == -1:
+                print("something wrong happend")
+        except ValueError:
+            print("ERROR:\tparameters must be integers")
+        except OverflowError:
+            print("ERROR:\tparameter way too long")
+    else:
+        print("USAGE:\t./307cereales nE1 nE2 nE3 nE4 pAvoine pBle pMais pOrge pSoja")
