@@ -4,6 +4,7 @@
 epitech mathematics project
 
 Features :
+
 	 computes the best opportunity for a production of cereales
 	 with ressources quantity constraint and product prices
 
