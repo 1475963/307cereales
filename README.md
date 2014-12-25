@@ -4,14 +4,13 @@
 epitech mathematics project
 
 Features :
-
-    generates dependency graph from a Makefile
-        lists all command lines for a modified source file
+	 computes the best opportunity for a production of cereales
+	 with ressources quantity constraint and product prices
 
 Usage :
 * ./307cereales E1 E2 E3 E4 pA pB pM pO pS
-EX -> ressources
-pX -> prices for cereales
+* EX -> ressources
+* pX -> prices for cereales
 
 Libraries :
 * Tkinter for python -> already in standard python3.x library
